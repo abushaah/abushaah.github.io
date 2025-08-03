@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Pixel Grid Painter</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; margin: 20px; }
+    #grid { display: grid; margin: 20px auto; }
+    .pixel {
+      width: 15px;
+      height: 15px;
+      border: 1px solid #ccc;
+      box-sizing: border-box;
+      cursor: pointer;
+      background-color: #fff;
+    }
+    .selected {
+      background-color: white !important;
+      border: 2px dashed blue !important;
+    }
+    input[type="number"] { width: 60px; }
+    .inline-feedback { margin-left: 10px; color: green; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h1>Pixel Grid Painter</h1>
+
+  <label>Grid Size (max 100):
+    <input type="number" id="gridSize" value="20" min="1" max="100">
+  </label>
+  <button onclick="createGrid()">Create Grid</button>
+  <br><br>
+
+  <input type="color" id="colorPicker" value="#000000">
+  <button onclick="saveGrid()">Save Grid as Image</button>
+  <br><br>
+  <button onclick="clearGrid()">Clear All</button>
+  <br><br>
+  <button onclick="enableSelection()">Select</button>
+  <button onclick="copySelection()">Copy</button>
+  <span id="copyFeedback" class="inline-feedback"></span>
+  <button onclick="enablePaste()">Select Paste</button>
+  <br><br>
+
+  <input type="file" id="imageInput" accept="image/*">
+  <canvas id="canvas" style="display:none;"></canvas>
+  <div id="grid"></div>
+
+  <script>
+    let gridContainer = document.getElementById('grid');
+    let colorPicker = document.getElementById('colorPicker');
+    let gridSize = 20;
+    let selectionClicks = 0;
+    let startPixel = null, endPixel = null;
+    let selectedPixels = [], copiedColors = [];
+
+    let mode = 'paint'; // can be 'paint', 'select', 'paste'
+
+    function createGrid() {
+      gridSize = Math.min(100, parseInt(document.getElementById('gridSize').value));
+      gridContainer.innerHTML = '';
+      gridContainer.style.gridTemplateColumns = `repeat(${gridSize}, 15px)`;
+      gridContainer.style.gridTemplateRows = `repeat(${gridSize}, 15px)`;
+      selectionClicks = 0;
+      selectedPixels = [];
+
+      for (let i = 0; i < gridSize * gridSize; i++) {
+        let pixel = document.createElement('div');
+        pixel.className = 'pixel';
+        pixel.dataset.index = i;
+        pixel.addEventListener('click', () => {
+            const index = +pixel.dataset.index;
+
+            if (mode === 'select') {
+                if (!startPixel) {
+                startPixel = pixel;
+                pixel.classList.add('selected');
+                } else {
+                endPixel = pixel;
+                selectRectangle(startPixel, endPixel);
+                startPixel = endPixel = null;
+                mode = 'paint'; // reset mode after selection
+                }
+            } else if (mode === 'paste') {
+                if (!copiedColors.length) return;
+                let [startRow, startCol] = indexToCoords(index);
+                for (let r = 0; r < copiedColors.length; r++) {
+                for (let c = 0; c < copiedColors[r].length; c++) {
+                    let tr = startRow + r, tc = startCol + c;
+                    if (tr < gridSize && tc < gridSize) {
+                    let i = coordsToIndex(tr, tc);
+                    gridContainer.children[i].style.backgroundColor = copiedColors[r][c];
+                    }
+                }
+                }
+                mode = 'paint'; // reset to paint after pasting
+            } else {
+                pixel.style.backgroundColor = colorPicker.value;
+            }
+        });
+        gridContainer.appendChild(pixel);
+      }
+    }
+
+    function indexToCoords(index) {
+      return [Math.floor(index / gridSize), index % gridSize];
+    }
+
+    function coordsToIndex(row, col) {
+      return row * gridSize + col;
+    }
+
+    function clearGrid() {
+        [...gridContainer.children].forEach(pixel => {
+            pixel.style.backgroundColor = '#ffffff';
+        });
+        clearSelection();
+        copiedColors = [];
+        document.getElementById('copyFeedback').textContent = '';
+    }
+
+    function selectRectangle(start, end) {
+        clearSelection();
+        let [r1, c1] = indexToCoords(+start.dataset.index);
+        let [r2, c2] = indexToCoords(+end.dataset.index);
+        let rMin = Math.min(r1, r2), rMax = Math.max(r1, r2);
+        let cMin = Math.min(c1, c2), cMax = Math.max(c1, c2);
+
+        for (let r = rMin; r <= rMax; r++) {
+            for (let c = cMin; c <= cMax; c++) {
+            let i = coordsToIndex(r, c);
+            let pixel = gridContainer.children[i];
+            pixel.classList.add('selected');
+            selectedPixels.push(pixel);
+            }
+        }
+    }
+
+    function clearSelection() {
+      [...gridContainer.children].forEach(p => p.classList.remove('selected'));
+      selectedPixels = [];
+    }
+
+    function copySelection() {
+      copiedColors = [];
+      const indices = selectedPixels.map(p => +p.dataset.index);
+      const coords = indices.map(indexToCoords);
+      const rows = coords.map(c => c[0]);
+      const cols = coords.map(c => c[1]);
+      const minRow = Math.min(...rows), minCol = Math.min(...cols);
+
+      for (let r = minRow; r <= Math.max(...rows); r++) {
+        let row = [];
+        for (let c = minCol; c <= Math.max(...cols); c++) {
+          let i = coordsToIndex(r, c);
+          row.push(gridContainer.children[i].style.backgroundColor || '#ffffff');
+        }
+        copiedColors.push(row);
+      }
+
+      clearSelection();
+      document.getElementById('copyFeedback').textContent = 'Copied!';
+    }
+
+    function enableSelection() {
+        clearSelection();
+        startPixel = null;
+        endPixel = null;
+        mode = 'select';
+        document.getElementById('copyFeedback').textContent = '';
+    }
+
+    function enablePaste() {
+        mode = 'paste';
+      [...gridContainer.children].forEach(pixel => {
+        pixel.onclick = () => {
+          if (!copiedColors.length) return;
+          let [startRow, startCol] = indexToCoords(+pixel.dataset.index);
+          for (let r = 0; r < copiedColors.length; r++) {
+            for (let c = 0; c < copiedColors[r].length; c++) {
+              let tr = startRow + r, tc = startCol + c;
+              if (tr < gridSize && tc < gridSize) {
+                let i = coordsToIndex(tr, tc);
+                gridContainer.children[i].style.backgroundColor = copiedColors[r][c];
+              }
+            }
+          }
+        };
+      });
+    }
+
+    function saveGrid() {
+      const scale = 8;
+      const canvas = document.createElement('canvas');
+      canvas.width = gridSize * scale;
+      canvas.height = gridSize * scale;
+      const ctx = canvas.getContext('2d');
+      const pixels = document.querySelectorAll('.pixel');
+
+      pixels.forEach((pixel, index) => {
+        const color = pixel.style.backgroundColor || '#ffffff';
+        ctx.fillStyle = color;
+        const x = index % gridSize;
+        const y = Math.floor(index / gridSize);
+        ctx.fillRect(x * scale, y * scale, scale, scale);
+      });
+
+      const link = document.createElement('a');
+      link.download = 'pixel-grid.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    }
+
+    document.getElementById('imageInput').addEventListener('change', function (e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+      img.onload = function () {
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = gridSize;
+        canvas.height = gridSize;
+        ctx.drawImage(img, 0, 0, gridSize, gridSize);
+        const imageData = ctx.getImageData(0, 0, gridSize, gridSize).data;
+        const pixels = document.querySelectorAll('.pixel');
+
+        for (let i = 0; i < pixels.length; i++) {
+          const r = imageData[i * 4];
+          const g = imageData[i * 4 + 1];
+          const b = imageData[i * 4 + 2];
+          pixels[i].style.backgroundColor = `rgb(${r},${g},${b})`;
+        }
+      };
+    });
+
+    window.onload = createGrid;
+  </script>
+</body>
+</html>
