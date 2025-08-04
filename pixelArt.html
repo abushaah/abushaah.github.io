@@ -4,8 +4,16 @@
   <meta charset="UTF-8" />
   <title>Pixel Grid Painter</title>
   <style>
-    body { font-family: sans-serif; text-align: center; margin: 20px; }
-    #grid { display: grid; margin: 20px auto; }
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      margin: 20px;
+    }
+    #grid {
+      display: grid;
+      margin: 20px auto;
+      justify-content: center;
+    }
     .pixel {
       width: 15px;
       height: 15px;
@@ -29,11 +37,7 @@
     <input type="number" id="gridSize" value="20" min="1" max="100">
   </label>
   <button onclick="createGrid()">Create Grid</button>
-  <br><br>
-
   <input type="color" id="colorPicker" value="#000000">
-  <button onclick="saveGrid()">Save Grid as Image</button>
-  <br><br>
   <button onclick="clearGrid()">Clear All</button>
   <br><br>
   <button onclick="enableSelection()">Select</button>
@@ -41,7 +45,8 @@
   <span id="copyFeedback" class="inline-feedback"></span>
   <button onclick="enablePaste()">Select Paste</button>
   <br><br>
-
+  <button onclick="saveGrid()">Save Grid as Image</button>
+  <label>Create grid from image</label>
   <input type="file" id="imageInput" accept="image/*">
   <canvas id="canvas" style="display:none;"></canvas>
   <div id="grid"></div>
