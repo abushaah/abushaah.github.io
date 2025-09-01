@@ -1,1 +1,167 @@
-Hello World!
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Minimal Blog</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+  <style>
+    body {
+      font-family: "Helvetica Neue", Arial, sans-serif;
+      background-color: #F5F5F5; /* grey sides */
+      color: #333;
+    }
+
+    /* Page wrapper */
+    .page-wrapper {
+      background: #fff;
+      max-width: 1400px;
+      margin: 0 auto;
+      min-height: 100vh;
+      width: 94%;
+    }
+
+
+    /* Header */
+    .bg-light {
+      background-color: #fff !important;
+    }
+    .navbar {
+      padding: 1.5rem 0;
+    }
+    .navbar-brand {
+        font-weight: 500;
+        letter-spacing: 4px;
+        display: inline-block;
+        transform: scaleY(1.1);
+        transform-origin: bottom;
+        font-size: 25px;
+    }
+    .navbar-nav .nav-link {
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-left: 1.5rem;
+      color: #555;
+      font-weight: 100;
+    }
+    .navbar-nav .nav-link:hover {
+      color: #000;
+    }
+    .navbar-collapse {
+      flex-direction: row-reverse;
+    }
+    .divider {
+      border-top: 1px solid #f2f2f2;
+      width: 98%;
+      margin: 0 auto;
+    }
+
+    /* Hero Image */
+    .hero img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Blog Section */
+    .blog-preview {
+      padding: 2rem;
+    }
+    .blog-title {
+      font-size: 1rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 1rem;
+    }
+    .blog-text {
+      font-size: 0.9rem;
+      color: #555;
+      margin-bottom: 1.5rem;
+    }
+    .btn-readmore {
+      font-size: 0.8rem;
+      border-radius: 2rem;
+      padding: 0.5rem 1.2rem;
+      border: 1px solid #000;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .btn-readmore:hover {
+      background: #000;
+      color: #fff;
+    }
+
+    footer {
+      margin-top: 3rem;
+      padding: 2rem 0;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <!-- Header -->
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">ABUSHAAH</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNavDropdown">
+          <ul class="navbar-nav">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="#">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Portfolio</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Contact</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Projects
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                <li><a class="dropdown-item" href="#">PixelArt</a></li>
+                <li><a class="dropdown-item" href="#">AvianFluDashboard</a></li>
+                <li><a class="dropdown-item" href="#">CFRUFM</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <div class="divider"></div>
+
+    <!-- Hero -->
+    <section class="hero">
+      <div class="container my-4">
+        <img src="images/banner.png" alt="Hero Image">
+      </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section class="blog-preview">
+      <div class="container">
+        <h2 class="blog-title">Personal portfolio website</h2>
+        <p class="blog-text">
+          Sed elementum tempus egestas sed sed risus. Mauris in aliquam sem fringilla ut morbi tincidunt.
+          Placerat vestibulum lectus mauris ultrices eros. Et leo duis ut diam. Auctor neque vitae tempus […]
+        </p>
+        <a href="#" class="btn btn-readmore">Read More</a>
+      </div>
+    </section>
+
+    <footer>
+      © 2025
+    </footer>
+  </div>
+</body>
+</html>
